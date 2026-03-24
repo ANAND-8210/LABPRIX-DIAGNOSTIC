@@ -699,16 +699,6 @@ section[id] {
   border-radius: 28px;
 }
 
-.review-avatar {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.84);
-  box-shadow: 0 12px 24px rgba(22, 50, 75, 0.12);
-  margin-bottom: 16px;
-}
-
 .review-card strong,
 .review-card span {
   display: block;
