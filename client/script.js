@@ -456,24 +456,29 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(bookingData)
       });
 
-      const contentType = response.headers.get("content-type") || "";
+      const responseText = await response.text();
+      const trimmedResponse = responseText.trim();
+      const looksLikeHtml = trimmedResponse.startsWith("<");
       let result = null;
 
-      if (contentType.includes("application/json")) {
-        result = await response.json();
-      } else {
-        const responseText = await response.text();
-        const looksLikeHtml = responseText.trim().startsWith("<");
-
+      if (looksLikeHtml) {
         throw new Error(
-          looksLikeHtml
-            ? "Backend not connected. Start the Express server and open http://localhost:5000."
-            : "Unexpected response from server."
+          "Backend not connected. Start the Express server and open http://localhost:5000."
         );
       }
 
+      if (trimmedResponse) {
+        try {
+          result = JSON.parse(trimmedResponse);
+        } catch (parseError) {
+          throw new Error("Unexpected response from server.");
+        }
+      }
+
       if (!response.ok) {
-        throw new Error(result.message || "Something went wrong while saving the booking.");
+        throw new Error(
+          result?.message || "Something went wrong while saving the booking."
+        );
       }
 
       setFeedback("Booking saved successfully.", "success");
