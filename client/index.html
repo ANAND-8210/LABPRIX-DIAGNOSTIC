@@ -195,6 +195,56 @@
   </div>
 </footer>
 
+<!-- BOOKING MODAL -->
+<div class="modal" id="booking-modal" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <button class="modal-close" data-close-booking aria-label="Close booking modal">✕</button>
+    
+    <div class="modal-copy">
+      <h2>Book Your Appointment</h2>
+      <p>Fill in your details to schedule a blood collection and diagnostic test.</p>
+    </div>
+
+    <form class="booking-form" id="booking-form">
+      <label>
+        <span>Full Name *</span>
+        <input type="text" name="name" placeholder="Enter your full name" required>
+      </label>
+
+      <label>
+        <span>Phone Number *</span>
+        <input type="tel" name="phone" placeholder="10-15 digit phone number" required>
+      </label>
+
+      <label>
+        <span>Email Address *</span>
+        <input type="email" name="email" placeholder="your@email.com" required>
+      </label>
+
+      <label>
+        <span>Select Package *</span>
+        <select name="package" id="package-select" required>
+          <option value="">Choose a health package...</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Preferred Date *</span>
+        <input type="date" name="date" id="booking-date" required>
+      </label>
+
+      <button type="submit" class="submit-button">
+        <span class="button-label">Confirm Booking</span>
+        <div class="button-spinner"></div>
+      </button>
+
+      <div class="form-feedback" id="form-message"></div>
+      <div class="connection-status" id="connection-status" data-state="checking"></div>
+    </form>
+  </div>
+</div>
+
 <script src="script.js?v=20260326-2"></script>
 
 </body>
