@@ -165,35 +165,135 @@ const packages = [
 
 document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_LOCAL_API_ORIGIN = "http://localhost:5000";
+  const FALLBACK_LOCAL_API_ORIGIN = "http://127.0.0.1:5000";
+  const API_PORT = "5000";
+  const API_DISCOVERY_TIMEOUT_MS = 2500;
+  const API_REQUEST_TIMEOUT_MS = 10000;
   const packageGrid = document.getElementById("package-grid");
   const packageSelect = document.getElementById("package-select");
   const bookingForm = document.getElementById("booking-form");
   const bookingModal = document.getElementById("booking-modal");
   const preferredDateInput = document.getElementById("preferred-date");
   const formFeedback = document.getElementById("form-feedback");
+  const connectionStatus = document.getElementById("connection-status");
   const submitButton = document.getElementById("submit-button");
   const openButtons = document.querySelectorAll("[data-open-booking]");
   const closeButtons = document.querySelectorAll("[data-close-booking]");
   const focusableSelector =
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
   let lastFocusedElement = null;
+  let resolvedApiBaseUrl = null;
+  let apiResolutionPromise = null;
 
-  const getApiBaseUrl = () => {
-    const { protocol, hostname, port } = window.location;
-    const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
-
-    if (protocol === "file:") {
-      return DEFAULT_LOCAL_API_ORIGIN;
+  const setConnectionStatus = (message, state) => {
+    if (!connectionStatus) {
+      return;
     }
 
-    if (isLocalhost && port && port !== "5000") {
-      return DEFAULT_LOCAL_API_ORIGIN;
-    }
-
-    return "";
+    connectionStatus.textContent = message;
+    connectionStatus.dataset.state = state;
   };
 
-  const API_BASE_URL = getApiBaseUrl();
+  const getApiCandidates = () => {
+    const { protocol, hostname, origin } = window.location;
+    const candidates = [];
+
+    if (protocol !== "file:" && origin && origin !== "null") {
+      candidates.push(origin);
+    }
+
+    if ((protocol === "http:" || protocol === "https:") && hostname) {
+      candidates.push(`${protocol}//${hostname}:${API_PORT}`);
+    }
+
+    candidates.push(DEFAULT_LOCAL_API_ORIGIN, FALLBACK_LOCAL_API_ORIGIN);
+
+    return [...new Set(candidates)];
+  };
+
+  const buildApiUrl = (baseUrl, pathname) => {
+    const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+    return `${baseUrl}${normalizedPath}`;
+  };
+
+  const requestJson = async (baseUrl, pathname, options = {}) => {
+    const controller = new AbortController();
+    const timeoutMs = options.timeoutMs ?? API_REQUEST_TIMEOUT_MS;
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(buildApiUrl(baseUrl, pathname), {
+        ...options,
+        signal: controller.signal
+      });
+      const responseText = await response.text();
+      const trimmedResponse = responseText.trim();
+      let data = null;
+
+      if (trimmedResponse) {
+        if (trimmedResponse.startsWith("<")) {
+          throw new Error("Expected JSON from the booking server but received HTML.");
+        }
+
+        try {
+          data = JSON.parse(trimmedResponse);
+        } catch (error) {
+          throw new Error("Unexpected response from server.");
+        }
+      }
+
+      return { response, data };
+    } catch (error) {
+      if (error.name === "AbortError") {
+        throw new Error("The booking server took too long to respond.");
+      }
+
+      throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  };
+
+  const resolveApiBaseUrl = async (forceRefresh = false) => {
+    if (resolvedApiBaseUrl && !forceRefresh) {
+      return resolvedApiBaseUrl;
+    }
+
+    if (apiResolutionPromise && !forceRefresh) {
+      return apiResolutionPromise;
+    }
+
+    setConnectionStatus("Checking booking server connection...", "checking");
+
+    apiResolutionPromise = (async () => {
+      for (const candidate of getApiCandidates()) {
+        try {
+          const { response, data } = await requestJson(candidate, "/api/health", {
+            timeoutMs: API_DISCOVERY_TIMEOUT_MS
+          });
+
+          if (response.ok && data?.success) {
+            resolvedApiBaseUrl = candidate;
+            setConnectionStatus(`Booking server connected at ${candidate}.`, "success");
+            return candidate;
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+
+      resolvedApiBaseUrl = null;
+      setConnectionStatus(
+        "Booking server offline. Start the Express server and open http://localhost:5000.",
+        "error"
+      );
+      return null;
+    })();
+
+    const result = await apiResolutionPromise;
+    apiResolutionPromise = null;
+    return result;
+  };
 
   const renderPackages = () => {
     if (!packageGrid || !packageSelect) {
@@ -307,6 +407,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (firstField) {
       firstField.focus();
     }
+
+    if (!resolvedApiBaseUrl) {
+      void resolveApiBaseUrl();
+    }
   };
 
   const closeModal = () => {
@@ -383,6 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderPackages();
   setMinimumDate();
+  void resolveApiBaseUrl();
 
   document.querySelectorAll("[data-book-package]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -448,53 +553,45 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       setSubmittingState(true);
 
-      const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+      const apiBaseUrl = await resolveApiBaseUrl();
+
+      if (!apiBaseUrl) {
+        throw new Error(
+          "Cannot reach the booking server. Start the Express server on http://localhost:5000."
+        );
+      }
+
+      const { response, data } = await requestJson(apiBaseUrl, "/api/bookings", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json"
         },
         body: JSON.stringify(bookingData)
       });
 
-      const responseText = await response.text();
-      const trimmedResponse = responseText.trim();
-      const looksLikeHtml = trimmedResponse.startsWith("<");
-      let result = null;
-
-      if (looksLikeHtml) {
-        throw new Error(
-          "Backend not connected. Start the Express server and open http://localhost:5000."
-        );
-      }
-
-      if (trimmedResponse) {
-        try {
-          result = JSON.parse(trimmedResponse);
-        } catch (parseError) {
-          throw new Error("Unexpected response from server.");
-        }
-      }
-
       if (!response.ok) {
         throw new Error(
-          result?.message || "Something went wrong while saving the booking."
+          data?.message || "Something went wrong while saving the booking."
         );
       }
 
-      setFeedback("Booking saved successfully.", "success");
-      alert("Booking Confirmed");
+      setConnectionStatus(`Booking server connected at ${apiBaseUrl}.`, "success");
+      setFeedback(data?.message || "Booking saved successfully.", "success");
       bookingForm.reset();
       setMinimumDate();
       clearFieldErrors();
-      closeModal();
+      window.setTimeout(closeModal, 900);
     } catch (error) {
+      resolvedApiBaseUrl = null;
+      void resolveApiBaseUrl(true);
+
       const message =
         error instanceof TypeError
           ? "Cannot reach the booking server. Start the Express server on http://localhost:5000."
           : error.message || "Something went wrong.";
 
       setFeedback(message, "error");
-      alert(message);
     } finally {
       setSubmittingState(false);
     }

@@ -147,7 +147,11 @@ button {
   border-radius: 999px;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .nav-cta,
@@ -156,14 +160,14 @@ button {
 .submit-button {
   color: #ffffff;
   background: linear-gradient(135deg, var(--primary), var(--primary-deep));
-  box-shadow: 0 16px 34px rgba(10, 77, 157, 0.24);
+  box-shadow: 0 12px 24px rgba(10, 77, 157, 0.2);
 }
 
 .secondary-button {
   color: var(--primary-deep);
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(12, 107, 215, 0.16);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 10px 22px rgba(17, 58, 112, 0.1);
 }
 
 .nav-cta:hover,
@@ -176,7 +180,16 @@ button {
 .secondary-button:focus-visible,
 .card-button:focus-visible,
 .submit-button:focus-visible {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+}
+
+.nav-cta:active,
+.primary-button:active,
+.secondary-button:active,
+.card-button:active,
+.submit-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 8px 18px rgba(10, 77, 157, 0.18);
 }
 
 .hero-section {
@@ -452,7 +465,6 @@ button {
 }
 
 .packages-grid {
-  perspective: 1600px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -462,7 +474,6 @@ button {
   flex-direction: column;
   padding: 28px;
   border-radius: 28px;
-  transform-style: preserve-3d;
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(230, 242, 255, 0.92));
@@ -470,7 +481,7 @@ button {
 
 .package-card:hover,
 .package-card:focus-within {
-  transform: translateY(-12px) rotateX(5deg) rotateY(-5deg);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-strong);
   border-color: rgba(12, 107, 215, 0.22);
 }
@@ -503,7 +514,6 @@ button {
   border-radius: 22px;
   border: 1px solid rgba(12, 107, 215, 0.1);
   box-shadow: 0 20px 38px rgba(8, 53, 109, 0.18);
-  transform: translateZ(28px);
 }
 
 .card-media img {
@@ -517,7 +527,7 @@ button {
 
 .package-card:hover .card-media img,
 .package-card:focus-within .card-media img {
-  transform: scale(1.1);
+  transform: scale(1.06);
 }
 
 .card-head h3 {
@@ -538,7 +548,6 @@ button {
   font-size: 1.06rem;
   font-weight: 700;
   box-shadow: 0 14px 30px rgba(10, 77, 157, 0.2);
-  transform: translateZ(20px);
 }
 
 .card-tests {
@@ -555,7 +564,6 @@ button {
 .card-button {
   margin-top: auto;
   width: 100%;
-  transform: translateZ(24px);
 }
 
 .benefits-grid {
@@ -704,6 +712,46 @@ button {
 .form-feedback {
   min-height: 24px;
   font-weight: 700;
+}
+
+.connection-status {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(12, 107, 215, 0.12);
+  background: rgba(220, 235, 255, 0.62);
+  color: var(--primary-deep);
+  font-weight: 700;
+}
+
+.connection-status::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 5px rgba(12, 107, 215, 0.12);
+}
+
+.connection-status[data-state="checking"] {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.connection-status[data-state="success"] {
+  color: var(--success);
+  border-color: rgba(19, 121, 91, 0.16);
+  background: rgba(19, 121, 91, 0.08);
+}
+
+.connection-status[data-state="error"] {
+  color: var(--danger);
+  border-color: rgba(207, 63, 92, 0.16);
+  background: rgba(207, 63, 92, 0.08);
 }
 
 .form-feedback[data-state="error"] {

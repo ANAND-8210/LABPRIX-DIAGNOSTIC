@@ -14,7 +14,7 @@
     href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap"
     rel="stylesheet"
   >
-  <link rel="stylesheet" href="style.css?v=20260325-2">
+  <link rel="stylesheet" href="style.css?v=20260326-1">
 </head>
 <body>
   <header class="site-header">
@@ -206,6 +206,9 @@
           Fill in your details below. The form sends your booking to the Express backend
           and stores it in MongoDB after validation.
         </p>
+        <p class="connection-status" id="connection-status" data-state="checking">
+          Checking booking server connection...
+        </p>
       </div>
 
       <form id="booking-form" class="booking-form" novalidate>
@@ -246,6 +249,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260325-2"></script>
+  <script src="script.js?v=20260326-1"></script>
 </body>
 </html>
