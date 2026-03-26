@@ -5,30 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta
     name="description"
-    content="ADLS Diagnostic Center online booking system for pathology and health packages."
+    content="LabPrix Diagnostic online booking system for pathology tests and health packages."
   >
-  <title>ADLS Pathology Health Packages</title>
+  <title>LabPrix Diagnostic | Health Packages and Test Booking</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap"
     rel="stylesheet"
   >
-  <link rel="stylesheet" href="style.css?v=20260326-1">
+  <link rel="stylesheet" href="style.css?v=20260326-2">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-wrap">
-      <a href="#top" class="brand" aria-label="ADLS Diagnostic Center home">
-        <span class="brand-mark">ADLS</span>
+      <a href="#top" class="brand" aria-label="LabPrix Diagnostic home">
+        <span class="brand-mark">LP</span>
         <span class="brand-text">
-          <strong>ADLS Diagnostic Center</strong>
+          <strong>LabPrix Diagnostic</strong>
           <small>Pathology and preventive health packages</small>
         </span>
       </a>
 
       <nav class="site-nav" aria-label="Primary">
         <a href="#packages">Packages</a>
+        <a href="#ai-chat">AI Test Chat</a>
         <a href="#benefits">Why Choose Us</a>
         <a href="#contact">Contact</a>
         <button class="nav-cta" type="button" data-open-booking>Book Now</button>
@@ -41,10 +42,11 @@
       <div class="container hero-grid">
         <div class="hero-copy">
           <span class="eyebrow">Modern diagnostic booking experience</span>
-          <h1>ADLS Pathology Health Packages</h1>
+          <h1>LabPrix Diagnostic Health Packages</h1>
           <p>
-            Browse well-structured health packages, compare included tests, and submit
-            your preferred booking date through a fast and reliable online appointment form.
+            Browse well-structured health packages, compare included tests, chat with
+            our AI test guide, and submit your preferred booking date through a fast
+            and reliable online appointment form.
           </p>
 
           <div class="hero-actions">
@@ -58,12 +60,12 @@
               <span>Routine, preventive, diabetic, thyroid, and full body checkups.</span>
             </article>
             <article class="stat-card">
-              <strong>Real Booking API</strong>
-              <span>Bookings are sent to the backend and saved in MongoDB.</span>
+              <strong>AI Test Guide</strong>
+              <span>Ask about CBC, HbA1C, thyroid tests, package prices, and more.</span>
             </article>
             <article class="stat-card">
-              <strong>Responsive UI</strong>
-              <span>Optimized for mobile, tablet, and desktop screens.</span>
+              <strong>Real Booking API</strong>
+              <span>Bookings are sent to the backend and saved in MongoDB.</span>
             </article>
           </div>
         </div>
@@ -87,7 +89,7 @@
           </article>
 
           <article class="hero-mini-card">
-            <strong>Real images from your diagnostic center</strong>
+            <strong>Real images from LabPrix Diagnostic</strong>
             <span>Your uploaded lab and sample collection images are now part of the page design.</span>
           </article>
         </aside>
@@ -101,8 +103,8 @@
           <span>Clear package breakdowns help patients choose the right checkup faster.</span>
         </article>
         <article class="info-card">
-          <strong>Fast form submission</strong>
-          <span>The booking form validates user input before sending data to the backend.</span>
+          <strong>AI-assisted answers</strong>
+          <span>The built-in chat helps patients understand package inclusions before booking.</span>
         </article>
         <article class="info-card">
           <strong>Production-style backend</strong>
@@ -126,11 +128,88 @@
       </div>
     </section>
 
+    <section class="ai-chat-section" id="ai-chat">
+      <div class="container ai-chat-grid">
+        <div class="section-heading ai-chat-copy">
+          <span class="eyebrow">AI test chat</span>
+          <h2>Ask about tests before you book.</h2>
+          <p>
+            Chat with the LabPrix AI assistant for quick details about package inclusions,
+            diabetes profiles, thyroid screening, vitamins, and other common lab tests.
+          </p>
+
+          <div class="chat-suggestions" aria-label="Suggested questions">
+            <button
+              class="chat-suggestion"
+              type="button"
+              data-chat-question="What tests are included in the Normal Health Checkup Package?"
+            >
+              Normal package tests
+            </button>
+            <button
+              class="chat-suggestion"
+              type="button"
+              data-chat-question="Which package is best for diabetes?"
+            >
+              Best package for diabetes
+            </button>
+            <button
+              class="chat-suggestion"
+              type="button"
+              data-chat-question="Explain the Thyroid Profile tests."
+            >
+              Explain thyroid tests
+            </button>
+            <button
+              class="chat-suggestion"
+              type="button"
+              data-chat-question="What is the price of the Female Full Body Checkup?"
+            >
+              Female checkup price
+            </button>
+          </div>
+        </div>
+
+        <div class="ai-chat-panel" aria-label="LabPrix AI Test Chat">
+          <div class="ai-chat-header">
+            <div>
+              <span class="panel-badge">AI Assistant</span>
+              <h3>LabPrix Test Guide</h3>
+            </div>
+            <p>
+              Ask about test meanings, package prices, included tests, or which package
+              fits a health concern best.
+            </p>
+          </div>
+
+          <div
+            class="ai-chat-messages"
+            id="ai-chat-messages"
+            aria-live="polite"
+            aria-label="AI chat messages"
+          ></div>
+
+          <form id="ai-chat-form" class="ai-chat-form" novalidate>
+            <label class="sr-only" for="ai-chat-input">Ask about tests and packages</label>
+            <input
+              type="text"
+              id="ai-chat-input"
+              name="message"
+              placeholder="Ask about CBC, HbA1C, thyroid profile, package price..."
+              autocomplete="off"
+              required
+            >
+            <button class="submit-button ai-chat-submit" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section class="benefits-section" id="benefits">
       <div class="container benefits-grid">
         <div class="section-heading">
-          <span class="eyebrow">Why choose ADLS</span>
-          <h2>Built like a real-world diagnostic center booking website.</h2>
+          <span class="eyebrow">Why choose LabPrix</span>
+          <h2>Built like a modern diagnostic center booking website.</h2>
           <p>
             The frontend focuses on clarity and trust, while the backend is structured to
             validate bookings and store them securely in MongoDB.
@@ -152,7 +231,7 @@
           </article>
           <article class="benefit-card">
             <h3>Ready for expansion</h3>
-            <p>You can later add admin panels, email confirmations, or payment integration.</p>
+            <p>You can later add live support handoff, email confirmations, or payment integration.</p>
           </article>
         </div>
       </div>
@@ -162,7 +241,7 @@
   <footer class="site-footer" id="contact">
     <div class="container footer-grid">
       <div class="footer-copy">
-        <h2>ADLS Diagnostic Center</h2>
+        <h2>LabPrix Diagnostic</h2>
         <p>
           Professional pathology booking for preventive health checkups, diabetic profiles,
           thyroid screening, and complete body packages.
@@ -179,10 +258,15 @@
         <p>24 Wellness Avenue, Medical Square, Kolkata, West Bengal 700001</p>
       </article>
 
-      <article class="footer-card">
+      <a
+        class="footer-card footer-card-link"
+        href="mailto:info@labprixdiagnostic.com?subject=LabPrix%20Diagnostic%20Enquiry"
+        aria-label="Email LabPrix Diagnostic"
+      >
         <span>Email</span>
-        <a href="mailto:info@adlsdiagnostic.com">info@adlsdiagnostic.com</a>
-      </article>
+        <strong>info@labprixdiagnostic.com</strong>
+        <small>Click to open your email app</small>
+      </a>
     </div>
   </footer>
 
@@ -249,6 +333,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260326-1"></script>
+  <script src="script.js?v=20260326-2"></script>
 </body>
 </html>

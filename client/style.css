@@ -423,6 +423,7 @@ button {
 
 .info-strip,
 .packages-section,
+.ai-chat-section,
 .benefits-section {
   padding: 22px 0 88px;
 }
@@ -466,6 +467,143 @@ button {
 
 .packages-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ai-chat-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.ai-chat-copy {
+  margin-bottom: 0;
+}
+
+.chat-suggestions {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chat-suggestion {
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(12, 107, 215, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--primary-deep);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.chat-suggestion:hover,
+.chat-suggestion:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(12, 107, 215, 0.3);
+  box-shadow: 0 14px 28px rgba(13, 56, 112, 0.14);
+}
+
+.ai-chat-panel {
+  padding: 28px;
+  border-radius: 30px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(14px);
+}
+
+.ai-chat-header h3 {
+  margin-top: 16px;
+  font-family: "Outfit", sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.ai-chat-header p {
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.ai-chat-messages {
+  min-height: 380px;
+  max-height: 460px;
+  margin-top: 20px;
+  padding-right: 6px;
+  overflow-y: auto;
+  display: grid;
+  gap: 14px;
+}
+
+.chat-message {
+  max-width: 86%;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(12, 107, 215, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14px 32px rgba(13, 56, 112, 0.1);
+}
+
+.chat-message.is-user {
+  margin-left: auto;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+}
+
+.chat-role {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.chat-message.is-user .chat-role {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.chat-message p {
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.chat-message.is-user p {
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.ai-chat-form {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.ai-chat-form input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(12, 107, 215, 0.14);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-chat-form input:focus {
+  outline: none;
+  border-color: rgba(12, 107, 215, 0.42);
+  box-shadow: 0 0 0 4px rgba(46, 157, 255, 0.14);
+}
+
+.ai-chat-submit {
+  min-width: 118px;
 }
 
 .package-card {
@@ -609,12 +747,45 @@ button {
   border-radius: 22px;
 }
 
+.footer-card-link {
+  display: block;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.footer-card-link:hover,
+.footer-card-link:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(12, 107, 215, 0.22);
+  box-shadow: var(--shadow-strong);
+}
+
 .footer-card p,
 .footer-card a {
   margin-top: 8px;
   color: var(--text);
   font-weight: 700;
   overflow-wrap: anywhere;
+}
+
+.footer-card-link strong,
+.footer-card-link small {
+  display: block;
+}
+
+.footer-card-link strong {
+  margin-top: 8px;
+  color: var(--text);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.footer-card-link small {
+  margin-top: 6px;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .modal {
@@ -785,6 +956,18 @@ button {
   display: inline-block;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -793,6 +976,7 @@ button {
 
 @media (max-width: 1080px) {
   .hero-grid,
+  .ai-chat-grid,
   .benefits-grid,
   .footer-grid {
     grid-template-columns: 1fr;
@@ -884,6 +1068,14 @@ button {
   .card-button,
   .submit-button {
     width: 100%;
+  }
+
+  .chat-message {
+    max-width: 100%;
+  }
+
+  .ai-chat-form {
+    grid-template-columns: 1fr;
   }
 
   .modal {
