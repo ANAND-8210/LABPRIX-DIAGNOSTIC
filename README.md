@@ -157,3 +157,10 @@ Request body:
 - Use HTTPS and environment variables in production.
 - Add rate limiting and CAPTCHA before deploying publicly.
 - Add email or SMS notifications if you want booking confirmations sent automatically.
+
+## Contact
+
+For any inquiries, you can reach me at:
+
+- **Email**: <lok8898saw@gmail.com>
+- **Phone**: 8454822399
