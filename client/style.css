@@ -851,6 +851,12 @@ button {
   gap: 16px;
 }
 
+.booking-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .booking-form label {
   display: grid;
   gap: 8px;
@@ -858,7 +864,8 @@ button {
 }
 
 .booking-form input,
-.booking-form select {
+.booking-form select,
+.booking-form textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: var(--radius-sm);
@@ -868,15 +875,22 @@ button {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.booking-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
 .booking-form input:focus,
-.booking-form select:focus {
+.booking-form select:focus,
+.booking-form textarea:focus {
   outline: none;
   border-color: rgba(12, 107, 215, 0.42);
   box-shadow: 0 0 0 4px rgba(46, 157, 255, 0.14);
 }
 
 .booking-form input.is-invalid,
-.booking-form select.is-invalid {
+.booking-form select.is-invalid,
+.booking-form textarea.is-invalid {
   border-color: rgba(207, 63, 92, 0.42);
   box-shadow: 0 0 0 4px rgba(207, 63, 92, 0.12);
 }
@@ -932,6 +946,23 @@ button {
 
 .form-feedback[data-state="success"] {
   color: var(--success);
+}
+
+.fallback-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  color: var(--success);
+  background: rgba(19, 121, 91, 0.08);
+  border: 1px solid rgba(19, 121, 91, 0.16);
+  font-weight: 800;
+}
+
+.fallback-link.is-hidden {
+  display: none;
 }
 
 .submit-button {
@@ -1031,7 +1062,8 @@ button {
 
   .hero-stats,
   .info-grid,
-  .benefit-list {
+  .benefit-list,
+  .booking-form-grid {
     grid-template-columns: 1fr;
   }
 }

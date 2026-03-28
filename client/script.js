@@ -355,19 +355,21 @@ const testDetails = [
 
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL =
-    window.location.protocol === "http:" || window.location.protocol === "https:"
-      ? window.location.origin
-      : "http://localhost:5000";
-  const API_HEALTH_URL = `${API_BASE_URL}/api/health`;
-  const API_BOOKINGS_URL = `${API_BASE_URL}/api/bookings`;
+    window.BOOKING_API_BASE_URL || "https://your-backend.onrender.com";
+  const API_HEALTH_URL = `${API_BASE_URL}/health`;
+  const API_BOOKINGS_URL = `${API_BASE_URL}/book`;
   const API_REQUEST_TIMEOUT_MS = 10000;
+  const TEST_TYPES = ["Blood Test", "Sugar Test", "Full Body Checkup"];
+  const WHATSAPP_NUMBER = "918454822399";
   const packageGrid = document.getElementById("package-grid");
-  const packageSelect = document.getElementById("package-select");
+  const testTypeSelect = document.getElementById("test-type-select");
   const bookingForm = document.getElementById("booking-form");
   const bookingModal = document.getElementById("booking-modal");
   const preferredDateInput = document.getElementById("preferred-date");
+  const preferredTimeInput = document.getElementById("preferred-time");
   const formFeedback = document.getElementById("form-feedback");
   const connectionStatus = document.getElementById("connection-status");
+  const whatsappFallbackLink = document.getElementById("booking-whatsapp-fallback");
   const submitButton = document.getElementById("submit-button");
   const aiChatForm = document.getElementById("ai-chat-form");
   const aiChatInput = document.getElementById("ai-chat-input");
@@ -387,6 +389,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
     connectionStatus.textContent = message;
     connectionStatus.dataset.state = state;
+  };
+
+  const getTodayString = () => {
+    const today = new Date();
+    return new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0];
+  };
+
+  const setDefaultTime = () => {
+    if (!preferredTimeInput || preferredTimeInput.value) {
+      return;
+    }
+
+    const now = new Date();
+    const roundedMinutes = Math.ceil(now.getMinutes() / 30) * 30;
+
+    if (roundedMinutes === 60) {
+      now.setHours(now.getHours() + 1, 0, 0, 0);
+    } else {
+      now.setMinutes(roundedMinutes, 0, 0);
+    }
+
+    preferredTimeInput.value = now.toTimeString().slice(0, 5);
+  };
+
+  const mapPackageToTestType = (packageName = "") => {
+    const normalizedName = packageName.toLowerCase();
+
+    if (!normalizedName) {
+      return "";
+    }
+
+    if (
+      normalizedName.includes("diabet") ||
+      normalizedName.includes("sugar")
+    ) {
+      return "Sugar Test";
+    }
+
+    if (
+      normalizedName.includes("full body") ||
+      normalizedName.includes("health checkup")
+    ) {
+      return "Full Body Checkup";
+    }
+
+    return "Blood Test";
+  };
+
+  const buildWhatsAppMessage = (bookingData) =>
+    [
+      "New Booking:",
+      `Name: ${bookingData.name}`,
+      `Phone: ${bookingData.phone}`,
+      `Email: ${bookingData.email}`,
+      `Test: ${bookingData.testType}`,
+      `Date: ${bookingData.date}`,
+      `Time: ${bookingData.time}`,
+      `Address: ${bookingData.address}`
+    ].join("\n");
+
+  const buildWhatsAppUrl = (bookingData) =>
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      buildWhatsAppMessage(bookingData)
+    )}`;
+
+  const hideWhatsAppFallback = () => {
+    if (!whatsappFallbackLink) {
+      return;
+    }
+
+    whatsappFallbackLink.classList.add("is-hidden");
+    whatsappFallbackLink.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+  };
+
+  const showWhatsAppFallback = (url) => {
+    if (!whatsappFallbackLink) {
+      return;
+    }
+
+    whatsappFallbackLink.href = url;
+    whatsappFallbackLink.classList.remove("is-hidden");
   };
 
   const normalizeText = (value = "") =>
@@ -911,7 +996,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return buildAssistantReply({
         greeting: "Hello!",
         explanation:
-          "Use the Book Now button anywhere on the page to open the booking form. Then choose your package and preferred date and submit your details.",
+          "Use the Book Now button anywhere on the page to open the booking form. Then choose your test type, date, time, address, and submit your details.",
         tip: "If you need home collection, the team can guide you after the booking request."
       });
     }
@@ -1001,7 +1086,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderPackages = () => {
-    if (!packageGrid || !packageSelect) {
+    if (!packageGrid) {
       return;
     }
 
@@ -1031,13 +1116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `
       )
       .join("");
-
-    packageSelect.innerHTML = `
-      <option value="">Choose a package</option>
-      ${packages
-        .map((pkg) => `<option value="${pkg.name}">${pkg.name}</option>`)
-        .join("")}
-    `;
   };
 
   const setMinimumDate = () => {
@@ -1045,12 +1123,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const today = new Date();
-    const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
-      .toISOString()
-      .split("T")[0];
-
-    preferredDateInput.min = localDate;
+    preferredDateInput.min = getTodayString();
   };
 
   const clearFeedback = () => {
@@ -1076,7 +1149,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    bookingForm.querySelectorAll("input, select").forEach((field) => {
+    bookingForm.querySelectorAll("input, select, textarea").forEach((field) => {
       field.classList.remove("is-invalid");
       field.removeAttribute("aria-invalid");
     });
@@ -1096,7 +1169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const openModal = (selectedPackage = "") => {
-    if (!bookingModal || !packageSelect) {
+    if (!bookingModal || !testTypeSelect) {
       return;
     }
 
@@ -1104,11 +1177,13 @@ document.addEventListener("DOMContentLoaded", () => {
     bookingModal.classList.add("is-open");
     bookingModal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
-    packageSelect.value = selectedPackage || "";
+    testTypeSelect.value = mapPackageToTestType(selectedPackage);
     clearFeedback();
     clearFieldErrors();
+    hideWhatsAppFallback();
+    setDefaultTime();
 
-    const firstField = bookingModal.querySelector("input, select");
+    const firstField = bookingModal.querySelector("input, select, textarea");
     if (firstField) {
       firstField.focus();
     }
@@ -1133,6 +1208,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const validateBooking = (bookingData) => {
     const errors = {};
     const phoneDigits = bookingData.phone.replace(/\D/g, "");
+    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
     if (!bookingData.name) {
       errors.name = "Full name is required.";
@@ -1150,12 +1226,26 @@ document.addEventListener("DOMContentLoaded", () => {
       errors.email = "Please enter a valid email address.";
     }
 
-    if (!bookingData.package) {
-      errors.package = "Please select a package.";
+    if (!TEST_TYPES.includes(bookingData.testType)) {
+      errors.testType = "Please select a valid test type.";
     }
 
     if (!bookingData.date) {
       errors.date = "Please choose a preferred date.";
+    } else if (bookingData.date < getTodayString()) {
+      errors.date = "Preferred date cannot be in the past.";
+    }
+
+    if (!bookingData.time) {
+      errors.time = "Please choose a preferred time.";
+    } else if (!timePattern.test(bookingData.time)) {
+      errors.time = "Please choose a valid time.";
+    }
+
+    if (!bookingData.address) {
+      errors.address = "Address is required for home visit.";
+    } else if (bookingData.address.length < 10) {
+      errors.address = "Please enter a complete home visit address.";
     }
 
     return errors;
@@ -1168,8 +1258,10 @@ document.addEventListener("DOMContentLoaded", () => {
       name: formData.get("name")?.toString().trim() || "",
       phone: formData.get("phone")?.toString().trim() || "",
       email: formData.get("email")?.toString().trim() || "",
-      package: formData.get("package")?.toString().trim() || "",
-      date: formData.get("date")?.toString().trim() || ""
+      testType: formData.get("testType")?.toString().trim() || "",
+      date: formData.get("date")?.toString().trim() || "",
+      time: formData.get("time")?.toString().trim() || "",
+      address: formData.get("address")?.toString().trim() || ""
     };
   };
 
@@ -1190,6 +1282,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderPackages();
   setMinimumDate();
+  setDefaultTime();
+  hideWhatsAppFallback();
   void checkBookingServerConnection();
   appendChatMessage(
     "bot",
@@ -1255,6 +1349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearFeedback();
     clearFieldErrors();
+    hideWhatsAppFallback();
 
     const bookingData = getBookingData();
     const errors = validateBooking(bookingData);
@@ -1290,9 +1385,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       setConnectionStatus("Connected to booking server", "success");
-      setFeedback(data?.message || "Booking saved successfully.", "success");
+      if (data?.notification?.status === "failed") {
+        setFeedback(
+          "Booking Successful \u2705, but WhatsApp delivery failed. Please use the fallback link below.",
+          "success"
+        );
+        showWhatsAppFallback(data?.fallbackUrl || buildWhatsAppUrl(bookingData));
+      } else {
+        setFeedback("Booking Successful \u2705", "success");
+      }
+
       bookingForm.reset();
       setMinimumDate();
+      setDefaultTime();
       clearFieldErrors();
       window.setTimeout(closeModal, 900);
     } catch (error) {
@@ -1303,7 +1408,10 @@ document.addEventListener("DOMContentLoaded", () => {
           ? "Booking server offline"
           : error.message || "Something went wrong.";
 
-      setFeedback(message, "error");
+      const fallbackUrl = buildWhatsAppUrl(bookingData);
+      setFeedback(`${message} Opening WhatsApp fallback...`, "error");
+      showWhatsAppFallback(fallbackUrl);
+      window.open(fallbackUrl, "_blank", "noopener,noreferrer");
     } finally {
       setSubmittingState(false);
     }

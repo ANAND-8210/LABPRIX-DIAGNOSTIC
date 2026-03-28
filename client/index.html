@@ -293,15 +293,36 @@
         </label>
 
         <label>
-          <span>Select Package *</span>
-          <select name="package" id="package-select" required>
-            <option value="">Choose a health package...</option>
+          <span>Test Type *</span>
+          <select name="testType" id="test-type-select" required>
+            <option value="">Choose a test type...</option>
+            <option value="Blood Test">Blood Test</option>
+            <option value="Sugar Test">Sugar Test</option>
+            <option value="Full Body Checkup">Full Body Checkup</option>
           </select>
         </label>
 
+        <div class="booking-form-grid">
+          <label>
+            <span>Preferred Date *</span>
+            <input type="date" name="date" id="preferred-date" required>
+          </label>
+
+          <label>
+            <span>Preferred Time *</span>
+            <input type="time" name="time" id="preferred-time" required>
+          </label>
+        </div>
+
         <label>
-          <span>Preferred Date *</span>
-          <input type="date" name="date" id="preferred-date" required>
+          <span>Home Visit Address *</span>
+          <textarea
+            name="address"
+            id="booking-address"
+            rows="4"
+            placeholder="Enter your full address for home collection"
+            required
+          ></textarea>
         </label>
 
         <button type="submit" class="submit-button" id="submit-button">
@@ -311,10 +332,22 @@
 
         <div class="form-feedback" id="form-feedback"></div>
         <div class="connection-status" id="connection-status" data-state="checking"></div>
+        <a
+          class="fallback-link is-hidden"
+          id="booking-whatsapp-fallback"
+          href="https://wa.me/918454822399"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Continue on WhatsApp
+        </a>
       </form>
     </div>
   </div>
 
+  <script>
+    window.BOOKING_API_BASE_URL = "https://your-backend.onrender.com";
+  </script>
   <script src="script.js?v=20260327-1"></script>
 </body>
 </html>
