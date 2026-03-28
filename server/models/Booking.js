@@ -18,6 +18,11 @@ const bookingSchema = new mongoose.Schema(
       trim: true,
       lowercase: true
     },
+    packageName: {
+      type: String,
+      required: true,
+      trim: true
+    },
     testType: {
       type: String,
       required: true,

@@ -14,12 +14,13 @@ The frontend booking form includes:
 - Full Name
 - Phone Number
 - Email
+- Health Package
 - Test Type
 - Date
 - Time
 - Address
 
-It validates all fields, sends a `POST` request with `fetch`, shows a loading spinner, displays success or error feedback, and opens a WhatsApp fallback link if the API request fails.
+It validates all fields, sends a `POST` request with `fetch`, shows a loading spinner, and displays whether the backend sent the booking details to WhatsApp automatically.
 
 ## Backend
 
@@ -36,6 +37,7 @@ It uses:
 - JSON file storage by default
 - MongoDB when `MONGODB_URI` is configured
 - Twilio WhatsApp API or WhatsApp Cloud API when credentials are configured
+- Direct server-side WhatsApp delivery to `84548 22399`
 
 ## Local Setup
 
@@ -84,7 +86,7 @@ https://your-service-name.onrender.com/health
 
 ```html
 <script>
-  window.BOOKING_API_URL = "https://your-backend.onrender.com/book";
+  window.BOOKING_API_BASE_URL = "https://your-backend.onrender.com";
 </script>
 ```
 
@@ -92,7 +94,7 @@ https://your-service-name.onrender.com/health
 
 ```html
 <script>
-  window.BOOKING_API_URL = "https://your-service-name.onrender.com/book";
+  window.BOOKING_API_BASE_URL = "https://your-service-name.onrender.com";
 </script>
 ```
 
@@ -119,11 +121,7 @@ Set:
 - `WHATSAPP_PHONE_NUMBER_ID`
 - `WHATSAPP_CLOUD_TOKEN`
 
-If the WhatsApp provider is not configured, the booking still saves and the frontend can fall back to:
-
-```text
-https://wa.me/918454822399?text=...
-```
+If the WhatsApp provider is not configured, booking storage still works, but automatic WhatsApp delivery will not complete until the backend credentials are added.
 
 ## Notes
 

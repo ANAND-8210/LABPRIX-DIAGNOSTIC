@@ -6,16 +6,18 @@ const packages = [
     featured: true,
     image: "../image1.jpg",
     tests: [
-      "CBC",
+      "Complete Blood Count (CBC)",
       "ESR",
       "Random Blood Sugar",
-      "HbA1C",
+      "HbA1C (Glycosylated Heamoglobin)",
       "Lipid Profile",
       "Liver Profile",
       "Kidney Profile",
       "Urine Routine",
       "Calcium",
-      "T3, T4, TSH",
+      "T3",
+      "T4",
+      "TSH",
       "Vitamin D3",
       "Vitamin B12",
       "Iron Studies"
@@ -27,16 +29,18 @@ const packages = [
     badge: "Upgrade",
     image: "../image2.jpg",
     tests: [
-      "CBC",
+      "Complete Blood Count (CBC)",
       "ESR",
       "Random Blood Sugar",
-      "HbA1C",
+      "HbA1C (Glycosylated Heamoglobin)",
       "Lipid Profile",
       "Liver Profile",
       "Kidney Profile",
       "Urine Routine",
       "Calcium",
-      "T3, T4, TSH",
+      "T3",
+      "T4",
+      "TSH",
       "Vitamin D3",
       "Vitamin B12",
       "Iron Studies",
@@ -49,10 +53,10 @@ const packages = [
     badge: "Diabetes Care",
     image: "../image3.jpg",
     tests: [
-      "CBC",
+      "Complete Blood Count (CBC)",
       "Blood Sugar Fasting",
-      "Post Prandial",
-      "HbA1C",
+      "Blood Sugar Post Prandial",
+      "HbA1C (Glycosylated Heamoglobin)",
       "Lipid Profile"
     ]
   },
@@ -63,7 +67,7 @@ const packages = [
     image: "../image4.jpg",
     tests: [
       "Random Blood Sugar",
-      "HbA1C"
+      "HbA1C (Glycosylated Heamoglobin)"
     ]
   },
   {
@@ -80,69 +84,102 @@ const packages = [
     ]
   },
   {
-    name: "Senior Citizen Health Checkup",
+    name: "Regular Health Checkup for Senior Citizen",
     price: "Rs. 3900",
     badge: "Senior Care",
     image: "../image6.jpg",
     tests: [
-      "CRP",
-      "RA",
-      "CK Total",
-      "CBC",
+      "C-Reactive Protein (CRP)",
+      "Rheumatoid Arthritis (RA)",
+      "Creatine Kinase Total (CK Total)",
+      "Complete Blood Count (CBC)",
       "ESR",
-      "Blood Sugar",
-      "HbA1C",
-      "Lipid",
-      "Liver",
-      "Kidney",
-      "Urine",
+      "Random Blood Sugar",
+      "HbA1C (Glycosylated Heamoglobin)",
+      "Lipid Profile",
+      "Liver Profile",
+      "Kidney Profile",
+      "Urine Routine",
       "Calcium",
-      "Thyroid",
-      "Vitamins",
-      "Iron"
+      "T3",
+      "T4",
+      "TSH",
+      "Vitamin D3",
+      "Vitamin B12",
+      "Iron Studies"
     ]
   },
   {
-    name: "Male Full Body Checkup",
+    name: "Total Complete Health Checkup for Male",
     price: "Rs. 4500",
     badge: "Men's Wellness",
     image: "../image7.jpg",
     tests: [
-      "PSA",
-      "CEA",
+      "Prostate-Specific Antigen (PSA)",
+      "Carcinoembryonic Antigen (CEA)",
       "HIV",
       "HBsAg",
-      "Full body tests"
+      "Complete Blood Count (CBC)",
+      "ESR",
+      "Random Blood Sugar",
+      "HbA1C (Glycosylated Heamoglobin)",
+      "Lipid Profile",
+      "Liver Profile",
+      "Kidney Profile",
+      "Urine Routine",
+      "Calcium",
+      "T3",
+      "T4",
+      "TSH",
+      "Vitamin D3",
+      "Vitamin B12",
+      "Iron Studies"
     ]
   },
   {
-    name: "Female Full Body Checkup",
+    name: "Total Complete Health Checkup for Female",
     price: "Rs. 4750",
     badge: "Women's Wellness",
     image: "../image8.jpg",
     tests: [
       "CA-125",
-      "CEA",
+      "Carcinoembryonic Antigen (CEA)",
       "HIV",
       "HBsAg",
-      "Full body tests"
+      "Complete Blood Count (CBC)",
+      "ESR",
+      "Random Blood Sugar",
+      "HbA1C (Glycosylated Heamoglobin)",
+      "Lipid Profile",
+      "Liver Profile",
+      "Kidney Profile",
+      "Urine Routine",
+      "Calcium",
+      "T3",
+      "T4",
+      "TSH",
+      "Vitamin D3",
+      "Vitamin B12",
+      "Iron Studies"
     ]
   },
   {
-    name: "Preventive Silver Profile",
+    name: "Preventing Silver Profile",
     price: "Rs. 2200",
     badge: "Preventive Care",
     image: "../image4.jpg",
     tests: [
-      "CBC",
+      "Complete Blood Count (CBC)",
       "ESR",
-      "Sugar",
-      "HbA1C",
-      "Lipid",
-      "Liver Screening",
-      "Kidney Screening",
-      "Urine",
-      "Thyroid"
+      "Random Blood Sugar",
+      "HbA1C (Glycosylated Heamoglobin)",
+      "Lipid Profile",
+      "Liver Screening (SGOT, SGPT)",
+      "Kidney Screening (Creatinine, Blood Urea Nitrogen, Uric Acid, Calcium)",
+      "Urine Routine",
+      "T3",
+      "T4",
+      "TSH"
     ]
   },
   {
@@ -151,13 +188,13 @@ const packages = [
     badge: "Routine Care",
     image: "../image6.jpg",
     tests: [
-      "CBC",
+      "Complete Blood Count (CBC)",
       "ESR",
-      "Sugar Fasting/PP",
-      "Lipid",
-      "Liver",
-      "Kidney",
-      "Urine",
+      "Blood Sugar Fasting / Post Prandial",
+      "Lipid Profile",
+      "Liver Screening (SGOT, SGPT)",
+      "Kidney Screening (Creatinine, Blood Urea Nitrogen, Uric Acid, Calcium)",
+      "Urine Routine",
       "TSH"
     ]
   }
@@ -169,10 +206,27 @@ const packageAliases = {
   "Diabetic Profile": ["diabetic profile", "diabetes profile", "diabetic package"],
   "Type 2 Diabetes Test": ["type 2 diabetes test", "type 2 test", "diabetes test"],
   "Thyroid Profile": ["thyroid profile", "thyroid package", "thyroid test"],
-  "Senior Citizen Health Checkup": ["senior citizen health checkup", "senior citizen package", "senior package"],
-  "Male Full Body Checkup": ["male full body checkup", "male checkup", "mens checkup", "men checkup"],
-  "Female Full Body Checkup": ["female full body checkup", "female checkup", "womens checkup", "women checkup"],
-  "Preventive Silver Profile": ["preventive silver profile", "preventive profile", "silver profile"],
+  "Regular Health Checkup for Senior Citizen": [
+    "regular health checkup for senior citizen",
+    "senior citizen package",
+    "senior package",
+    "senior citizen health checkup"
+  ],
+  "Total Complete Health Checkup for Male": [
+    "total complete health checkup for male",
+    "male package",
+    "male checkup",
+    "mens package",
+    "men checkup"
+  ],
+  "Total Complete Health Checkup for Female": [
+    "total complete health checkup for female",
+    "female package",
+    "female checkup",
+    "womens package",
+    "women checkup"
+  ],
+  "Preventing Silver Profile": ["preventing silver profile", "silver profile", "preventive silver profile"],
   "Routine Health Checkup": ["routine health checkup", "routine package", "routine profile"]
 };
 
@@ -360,8 +414,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const API_BOOKINGS_URL = `${API_BASE_URL}/book`;
   const API_REQUEST_TIMEOUT_MS = 10000;
   const TEST_TYPES = ["Blood Test", "Sugar Test", "Full Body Checkup"];
-  const WHATSAPP_NUMBER = "918454822399";
   const packageGrid = document.getElementById("package-grid");
+  const packageSelect = document.getElementById("package-select");
   const testTypeSelect = document.getElementById("test-type-select");
   const bookingForm = document.getElementById("booking-form");
   const bookingModal = document.getElementById("booking-modal");
@@ -369,7 +423,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const preferredTimeInput = document.getElementById("preferred-time");
   const formFeedback = document.getElementById("form-feedback");
   const connectionStatus = document.getElementById("connection-status");
-  const whatsappFallbackLink = document.getElementById("booking-whatsapp-fallback");
   const submitButton = document.getElementById("submit-button");
   const aiChatForm = document.getElementById("ai-chat-form");
   const aiChatInput = document.getElementById("ai-chat-input");
@@ -437,41 +490,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return "Blood Test";
-  };
-
-  const buildWhatsAppMessage = (bookingData) =>
-    [
-      "New Booking:",
-      `Name: ${bookingData.name}`,
-      `Phone: ${bookingData.phone}`,
-      `Email: ${bookingData.email}`,
-      `Test: ${bookingData.testType}`,
-      `Date: ${bookingData.date}`,
-      `Time: ${bookingData.time}`,
-      `Address: ${bookingData.address}`
-    ].join("\n");
-
-  const buildWhatsAppUrl = (bookingData) =>
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      buildWhatsAppMessage(bookingData)
-    )}`;
-
-  const hideWhatsAppFallback = () => {
-    if (!whatsappFallbackLink) {
-      return;
-    }
-
-    whatsappFallbackLink.classList.add("is-hidden");
-    whatsappFallbackLink.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-  };
-
-  const showWhatsAppFallback = (url) => {
-    if (!whatsappFallbackLink) {
-      return;
-    }
-
-    whatsappFallbackLink.href = url;
-    whatsappFallbackLink.classList.remove("is-hidden");
   };
 
   const normalizeText = (value = "") =>
@@ -634,7 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "This package is useful when you want a broader diabetes-focused screening.",
       "Type 2 Diabetes Test":
         "This is a smaller diabetes-focused option for quick screening.",
-      "Senior Citizen Health Checkup":
+      "Regular Health Checkup for Senior Citizen":
         "This package is designed for broader preventive screening in older adults."
     };
     const note = packageNotes[pkg.name] ? ` ${packageNotes[pkg.name]}` : "";
@@ -857,7 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (matchedPackage && asksAboutBooking) {
       return buildAssistantReply({
         greeting: "Hello!",
-        explanation: `To book ${matchedPackage.name}, click its Book Now button or use the main booking button, then fill in your name, phone, email, package, and preferred date.`,
+        explanation: `To book ${matchedPackage.name}, click its Book Now button or use the main booking button, then fill in your name, phone, email, health package, test type, date, time, and address.`,
         tip: "If you want home collection, the team can confirm the visit details after your request."
       });
     }
@@ -940,7 +958,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return buildAssistantReply({
         greeting: "Hello!",
         explanation:
-          "Senior Citizen Health Checkup is the best listed match for broader preventive screening in older adults.",
+          "Regular Health Checkup for Senior Citizen is the best listed match for broader preventive screening in older adults.",
         tip: "It is useful to confirm fasting instructions before booking because it includes multiple tests."
       });
     }
@@ -949,7 +967,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return buildAssistantReply({
         greeting: "Hello!",
         explanation:
-          "Female Full Body Checkup is the strongest listed match for a female-focused preventive package.",
+          "Total Complete Health Checkup for Female is the strongest listed match for a female-focused preventive package.",
         tip: "I can also share the included tests or the listed package price."
       });
     }
@@ -958,7 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return buildAssistantReply({
         greeting: "Hello!",
         explanation:
-          "Male Full Body Checkup is the strongest listed match for a male-focused preventive package.",
+          "Total Complete Health Checkup for Male is the strongest listed match for a male-focused preventive package.",
         tip: "I can also share the included tests or the listed package price."
       });
     }
@@ -996,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return buildAssistantReply({
         greeting: "Hello!",
         explanation:
-          "Use the Book Now button anywhere on the page to open the booking form. Then choose your test type, date, time, address, and submit your details.",
+          "Use the Book Now button anywhere on the page to open the booking form. Then choose your health package, test type, date, time, address, and submit your details.",
         tip: "If you need home collection, the team can guide you after the booking request."
       });
     }
@@ -1116,6 +1134,15 @@ document.addEventListener("DOMContentLoaded", () => {
         `
       )
       .join("");
+
+    if (packageSelect) {
+      packageSelect.innerHTML = `
+        <option value="">Choose a health package...</option>
+        ${packages
+          .map((pkg) => `<option value="${pkg.name}">${pkg.name}</option>`)
+          .join("")}
+      `;
+    }
   };
 
   const setMinimumDate = () => {
@@ -1177,10 +1204,12 @@ document.addEventListener("DOMContentLoaded", () => {
     bookingModal.classList.add("is-open");
     bookingModal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
+    if (packageSelect) {
+      packageSelect.value = selectedPackage || "";
+    }
     testTypeSelect.value = mapPackageToTestType(selectedPackage);
     clearFeedback();
     clearFieldErrors();
-    hideWhatsAppFallback();
     setDefaultTime();
 
     const firstField = bookingModal.querySelector("input, select, textarea");
@@ -1226,6 +1255,10 @@ document.addEventListener("DOMContentLoaded", () => {
       errors.email = "Please enter a valid email address.";
     }
 
+    if (!bookingData.packageName) {
+      errors.packageName = "Please select a health package.";
+    }
+
     if (!TEST_TYPES.includes(bookingData.testType)) {
       errors.testType = "Please select a valid test type.";
     }
@@ -1258,6 +1291,7 @@ document.addEventListener("DOMContentLoaded", () => {
       name: formData.get("name")?.toString().trim() || "",
       phone: formData.get("phone")?.toString().trim() || "",
       email: formData.get("email")?.toString().trim() || "",
+      packageName: formData.get("packageName")?.toString().trim() || "",
       testType: formData.get("testType")?.toString().trim() || "",
       date: formData.get("date")?.toString().trim() || "",
       time: formData.get("time")?.toString().trim() || "",
@@ -1283,7 +1317,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderPackages();
   setMinimumDate();
   setDefaultTime();
-  hideWhatsAppFallback();
   void checkBookingServerConnection();
   appendChatMessage(
     "bot",
@@ -1302,6 +1335,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   closeButtons.forEach((button) => {
     button.addEventListener("click", closeModal);
+  });
+
+  packageSelect?.addEventListener("change", () => {
+    if (!testTypeSelect) {
+      return;
+    }
+
+    testTypeSelect.value = mapPackageToTestType(packageSelect.value);
   });
 
   chatSuggestionButtons.forEach((button) => {
@@ -1349,7 +1390,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearFeedback();
     clearFieldErrors();
-    hideWhatsAppFallback();
 
     const bookingData = getBookingData();
     const errors = validateBooking(bookingData);
@@ -1385,12 +1425,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       setConnectionStatus("Connected to booking server", "success");
-      if (data?.notification?.status === "failed") {
+      const shouldCloseAfterSubmit = data?.notification?.status === "sent" || !data?.notification;
+
+      if (data?.notification?.status === "sent") {
+        setFeedback("Booking Successful \u2705 Details sent to WhatsApp.", "success");
+      } else if (data?.notification?.status === "skipped") {
         setFeedback(
-          "Booking Successful \u2705, but WhatsApp delivery failed. Please use the fallback link below.",
-          "success"
+          "Booking saved, but automatic WhatsApp sending is not configured on the backend yet.",
+          "error"
         );
-        showWhatsAppFallback(data?.fallbackUrl || buildWhatsAppUrl(bookingData));
+      } else if (data?.notification?.status === "failed") {
+        setFeedback(
+          "Booking saved, but automatic WhatsApp delivery failed on the backend.",
+          "error"
+        );
       } else {
         setFeedback("Booking Successful \u2705", "success");
       }
@@ -1399,7 +1447,10 @@ document.addEventListener("DOMContentLoaded", () => {
       setMinimumDate();
       setDefaultTime();
       clearFieldErrors();
-      window.setTimeout(closeModal, 900);
+
+      if (shouldCloseAfterSubmit) {
+        window.setTimeout(closeModal, 900);
+      }
     } catch (error) {
       void checkBookingServerConnection(true);
 
@@ -1408,10 +1459,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? "Booking server offline"
           : error.message || "Something went wrong.";
 
-      const fallbackUrl = buildWhatsAppUrl(bookingData);
-      setFeedback(`${message} Opening WhatsApp fallback...`, "error");
-      showWhatsAppFallback(fallbackUrl);
-      window.open(fallbackUrl, "_blank", "noopener,noreferrer");
+      setFeedback(message, "error");
     } finally {
       setSubmittingState(false);
     }

@@ -293,6 +293,13 @@
         </label>
 
         <label>
+          <span>Health Package *</span>
+          <select name="packageName" id="package-select" required>
+            <option value="">Choose a health package...</option>
+          </select>
+        </label>
+
+        <label>
           <span>Test Type *</span>
           <select name="testType" id="test-type-select" required>
             <option value="">Choose a test type...</option>
@@ -332,15 +339,6 @@
 
         <div class="form-feedback" id="form-feedback"></div>
         <div class="connection-status" id="connection-status" data-state="checking"></div>
-        <a
-          class="fallback-link is-hidden"
-          id="booking-whatsapp-fallback"
-          href="https://wa.me/918454822399"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Continue on WhatsApp
-        </a>
       </form>
     </div>
   </div>

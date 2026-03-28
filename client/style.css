@@ -948,23 +948,6 @@ button {
   color: var(--success);
 }
 
-.fallback-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 12px 18px;
-  border-radius: 999px;
-  color: var(--success);
-  background: rgba(19, 121, 91, 0.08);
-  border: 1px solid rgba(19, 121, 91, 0.16);
-  font-weight: 800;
-}
-
-.fallback-link.is-hidden {
-  display: none;
-}
-
 .submit-button {
   width: 100%;
 }

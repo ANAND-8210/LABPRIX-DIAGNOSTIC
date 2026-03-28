@@ -42,6 +42,7 @@ const normalizeBookingInput = (body = {}) => ({
   name: typeof body.name === "string" ? body.name.trim() : "",
   phone: typeof body.phone === "string" ? body.phone.trim() : "",
   email: typeof body.email === "string" ? body.email.trim().toLowerCase() : "",
+  packageName: typeof body.packageName === "string" ? body.packageName.trim() : "",
   testType: typeof body.testType === "string" ? body.testType.trim() : "",
   date: typeof body.date === "string" ? body.date.trim() : "",
   time: typeof body.time === "string" ? body.time.trim() : "",
@@ -99,6 +100,10 @@ const validateBookingInput = (bookingData) => {
     errors.push("Please enter a valid email address.");
   }
 
+  if (!bookingData.packageName) {
+    errors.push("Please select a health package.");
+  }
+
   if (!TEST_TYPES.includes(bookingData.testType)) {
     errors.push("Please select a valid test type.");
   }
@@ -132,16 +137,12 @@ const buildWhatsAppMessage = (bookingData) =>
     `Name: ${bookingData.name}`,
     `Phone: ${bookingData.phone}`,
     `Email: ${bookingData.email}`,
+    `Package: ${bookingData.packageName}`,
     `Test: ${bookingData.testType}`,
     `Date: ${bookingData.date}`,
     `Time: ${bookingData.time}`,
     `Address: ${bookingData.address}`
   ].join("\n");
-
-const buildWhatsAppFallbackUrl = (bookingData) =>
-  `https://wa.me/${WHATSAPP_NUMBER_WITH_COUNTRY_CODE}?text=${encodeURIComponent(
-    buildWhatsAppMessage(bookingData)
-  )}`;
 
 const ensureJsonStorage = async () => {
   await fs.mkdir(DATA_DIRECTORY, { recursive: true });
@@ -363,8 +364,7 @@ const createApp = () => {
       return res.status(400).json({
         success: false,
         message: validationErrors[0],
-        errors: validationErrors,
-        fallbackUrl: buildWhatsAppFallbackUrl(bookingData)
+        errors: validationErrors
       });
     }
 
@@ -378,16 +378,14 @@ const createApp = () => {
         success: true,
         message: "Booking saved successfully.",
         booking: savedBooking,
-        notification,
-        fallbackUrl: buildWhatsAppFallbackUrl(bookingData)
+        notification
       });
     } catch (error) {
       console.error("Failed to save booking:", error);
 
       return res.status(500).json({
         success: false,
-        message: "Something went wrong while saving the booking.",
-        fallbackUrl: buildWhatsAppFallbackUrl(bookingData)
+        message: "Something went wrong while saving the booking."
       });
     }
   };
