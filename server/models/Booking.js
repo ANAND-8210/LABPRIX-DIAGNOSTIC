@@ -18,12 +18,22 @@ const bookingSchema = new mongoose.Schema(
       trim: true,
       lowercase: true
     },
-    package: {
+    testType: {
       type: String,
       required: true,
       trim: true
     },
     date: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    time: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    address: {
       type: String,
       required: true,
       trim: true
@@ -38,4 +48,4 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Booking", bookingSchema);
+module.exports = mongoose.models.Booking || mongoose.model("Booking", bookingSchema);

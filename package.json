@@ -1,7 +1,7 @@
 {
   "name": "adls-diagnostic-booking-system",
   "version": "1.0.0",
-  "description": "Diagnostic center booking system built with HTML, CSS, vanilla JavaScript, Node.js, Express, and MongoDB.",
+  "description": "Blood collection booking system with a GitHub Pages frontend and a Render-ready Express backend.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

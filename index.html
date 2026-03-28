@@ -2,15 +2,249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=client/index.html">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting to Client App</title>
+  <meta
+    name="description"
+    content="Book a home blood collection visit online with date, time, and address details in one simple form."
+  >
+  <title>RedDrop Diagnostics | Online Blood Collection Booking</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <p>Redirecting to <a href="client/index.html">client/index.html</a>...</p>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="#top" aria-label="RedDrop Diagnostics home">
+          <span class="brand-mark">RD</span>
+          <span class="brand-copy">
+            <strong>RedDrop Diagnostics</strong>
+            <small>Safe home blood collection booking</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#services">Services</a>
+          <a href="#booking">Book Test</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Online sample collection booking</span>
+            <h1>Book your blood test from home in under a minute.</h1>
+            <p>
+              Choose your test, pick a date and time, and share your address for a
+              smooth home visit from the collection team.
+            </p>
+
+            <div class="hero-actions">
+              <a class="primary-button" href="#booking">Book Appointment</a>
+              <a
+                class="secondary-button"
+                href="https://wa.me/918454822399"
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp Support
+              </a>
+            </div>
+
+            <div class="hero-stats">
+              <article class="stat-card">
+                <strong>Fast Scheduling</strong>
+                <span>Pick your preferred date and time with a single form.</span>
+              </article>
+
+              <article class="stat-card">
+                <strong>Home Visit Ready</strong>
+                <span>Address is collected upfront for doorstep blood sample pickup.</span>
+              </article>
+
+              <article class="stat-card">
+                <strong>Backup on WhatsApp</strong>
+                <span>If the API fails, the same booking can open in WhatsApp instantly.</span>
+              </article>
+            </div>
+          </div>
+
+          <aside class="hero-panel" aria-label="Booking highlights">
+            <div class="panel-chip">Trusted booking flow</div>
+            <h2>Built for real-world GitHub Pages and Render deployment.</h2>
+
+            <ul class="panel-list">
+              <li>Responsive layout for mobile and desktop.</li>
+              <li>Client-side validation before any request is sent.</li>
+              <li>Live POST request to your Render backend endpoint.</li>
+              <li>WhatsApp-ready booking notification format.</li>
+            </ul>
+
+            <div class="panel-note">
+              <span>Destination number</span>
+              <strong>+91 84548 22399</strong>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="services-section" id="services">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Available services</span>
+            <h2>Choose the collection request that fits your health check.</h2>
+            <p>
+              The form supports the most common booking types for a blood collection website.
+            </p>
+          </div>
+
+          <div class="service-grid">
+            <article class="service-card">
+              <span class="service-icon">01</span>
+              <h3>Blood Test</h3>
+              <p>Book routine blood sample collection with doorstep convenience.</p>
+            </article>
+
+            <article class="service-card">
+              <span class="service-icon">02</span>
+              <h3>Sugar Test</h3>
+              <p>Schedule fasting or general sugar testing with a preferred timeslot.</p>
+            </article>
+
+            <article class="service-card">
+              <span class="service-icon">03</span>
+              <h3>Full Body Checkup</h3>
+              <p>Reserve a complete preventive checkup visit for home collection.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="booking-section" id="booking">
+        <div class="container booking-grid">
+          <div class="booking-copy">
+            <span class="eyebrow">Booking form</span>
+            <h2>Fill in the details for your home visit.</h2>
+            <p>
+              Every field is validated before submission so the backend receives a complete booking request.
+            </p>
+
+            <div class="info-card">
+              <strong>What happens next?</strong>
+              <p>
+                The booking is sent to the Render API, stored in JSON or MongoDB, and then forwarded to
+                WhatsApp using your configured provider.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <form id="booking-form" class="booking-form" novalidate>
+              <div class="form-field">
+                <label for="fullName">Full Name</label>
+                <input id="fullName" name="name" type="text" placeholder="Enter your full name" required>
+                <small class="field-error" id="name-error"></small>
+              </div>
+
+              <div class="form-field">
+                <label for="phoneNumber">Phone Number</label>
+                <input id="phoneNumber" name="phone" type="tel" inputmode="tel" placeholder="Enter your phone number" required>
+                <small class="field-error" id="phone-error"></small>
+              </div>
+
+              <div class="form-field">
+                <label for="emailAddress">Email</label>
+                <input id="emailAddress" name="email" type="email" placeholder="Enter your email address" required>
+                <small class="field-error" id="email-error"></small>
+              </div>
+
+              <div class="form-field">
+                <label for="testType">Test Type</label>
+                <select id="testType" name="testType" required>
+                  <option value="">Select a test type</option>
+                  <option value="Blood Test">Blood Test</option>
+                  <option value="Sugar Test">Sugar Test</option>
+                  <option value="Full Body Checkup">Full Body Checkup</option>
+                </select>
+                <small class="field-error" id="testType-error"></small>
+              </div>
+
+              <div class="field-grid">
+                <div class="form-field">
+                  <label for="bookingDate">Date</label>
+                  <input id="bookingDate" name="date" type="date" required>
+                  <small class="field-error" id="date-error"></small>
+                </div>
+
+                <div class="form-field">
+                  <label for="bookingTime">Time</label>
+                  <input id="bookingTime" name="time" type="time" required>
+                  <small class="field-error" id="time-error"></small>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="address">Address</label>
+                <textarea
+                  id="address"
+                  name="address"
+                  rows="4"
+                  placeholder="Enter complete home visit address"
+                  required
+                ></textarea>
+                <small class="field-error" id="address-error"></small>
+              </div>
+
+              <button id="submitButton" class="submit-button" type="submit">
+                <span class="button-label">Book Home Collection</span>
+                <span class="button-spinner" aria-hidden="true"></span>
+              </button>
+
+              <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+
+              <a
+                id="whatsapp-fallback"
+                class="fallback-link is-hidden"
+                href="https://wa.me/918454822399"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Continue this booking on WhatsApp
+              </a>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <div class="container footer-wrap">
+        <div>
+          <strong>RedDrop Diagnostics</strong>
+          <p>Blood collection booking for home visits and preventive health screening.</p>
+        </div>
+
+        <div class="footer-links">
+          <a href="tel:+918454822399">+91 84548 22399</a>
+          <a href="mailto:bookings@reddropdiagnostics.com">bookings@reddropdiagnostics.com</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 
   <script>
-    window.location.replace("client/index.html");
+    window.BOOKING_API_URL = "https://your-backend.onrender.com/book";
   </script>
+  <script src="script.js"></script>
 </body>
 </html>

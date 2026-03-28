@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: labprix-diagnostic
+    name: blood-collection-booking-api
     runtime: node
     plan: free
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /api/health
+    healthCheckPath: /health
     autoDeploy: true
     envVars:
       - key: NODE_ENV
