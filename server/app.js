@@ -20,6 +20,9 @@ const DATA_FILE = path.join(DATA_DIRECTORY, "bookings.json");
 const TEST_TYPES = ["Blood Test", "Sugar Test", "Full Body Checkup"];
 const WHATSAPP_NUMBER = "8454822399";
 const WHATSAPP_NUMBER_WITH_COUNTRY_CODE = `91${WHATSAPP_NUMBER}`;
+const DEFAULT_COUNTRY_CODE = "91";
+const DEFAULT_WHATSAPP_NOTIFY_TO = `+${WHATSAPP_NUMBER_WITH_COUNTRY_CODE}`;
+const DEFAULT_TWILIO_WHATSAPP_TO = `whatsapp:${DEFAULT_WHATSAPP_NOTIFY_TO}`;
 const WHATSAPP_PROVIDER = (process.env.WHATSAPP_PROVIDER || "").trim().toLowerCase();
 const MONGODB_URI = (process.env.MONGODB_URI || "").trim();
 
@@ -144,6 +147,153 @@ const buildWhatsAppMessage = (bookingData) =>
     `Address: ${bookingData.address}`
   ].join("\n");
 
+const getTrimmedEnvValue = (name) => (process.env[name] || "").trim();
+
+const getMissingEnvKeys = (keys = []) => keys.filter((key) => !getTrimmedEnvValue(key));
+
+const normalizePhoneDigits = (value = "") => String(value).replace(/\D/g, "");
+
+const formatE164PhoneNumber = (value = "", fallbackCountryCode = DEFAULT_COUNTRY_CODE) => {
+  const trimmedValue = String(value).trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const withoutWhatsAppPrefix = trimmedValue.replace(/^whatsapp:/i, "");
+  const digits = normalizePhoneDigits(withoutWhatsAppPrefix);
+
+  if (!digits) {
+    return "";
+  }
+
+  if (withoutWhatsAppPrefix.startsWith("+")) {
+    return `+${digits}`;
+  }
+
+  if (digits.startsWith(fallbackCountryCode)) {
+    return `+${digits}`;
+  }
+
+  return `+${fallbackCountryCode}${digits}`;
+};
+
+const formatTwilioWhatsAppNumber = (value = "") => {
+  const e164Number = formatE164PhoneNumber(value);
+  return e164Number ? `whatsapp:${e164Number}` : "";
+};
+
+const formatCloudWhatsAppNumber = (value = "") => {
+  const e164Number = formatE164PhoneNumber(value);
+  return e164Number ? e164Number.replace(/^\+/, "") : "";
+};
+
+const getNormalizedWhatsAppProvider = () => {
+  if (WHATSAPP_PROVIDER === "meta") {
+    return "cloud";
+  }
+
+  if (WHATSAPP_PROVIDER === "twilio" || WHATSAPP_PROVIDER === "cloud") {
+    return WHATSAPP_PROVIDER;
+  }
+
+  return "none";
+};
+
+const getTwilioWhatsAppConfig = () => {
+  const missingEnv = getMissingEnvKeys([
+    "TWILIO_ACCOUNT_SID",
+    "TWILIO_AUTH_TOKEN",
+    "TWILIO_WHATSAPP_FROM"
+  ]);
+  const accountSid = getTrimmedEnvValue("TWILIO_ACCOUNT_SID");
+  const authToken = getTrimmedEnvValue("TWILIO_AUTH_TOKEN");
+  const fromNumber = formatTwilioWhatsAppNumber(getTrimmedEnvValue("TWILIO_WHATSAPP_FROM"));
+  const target =
+    formatTwilioWhatsAppNumber(
+      getTrimmedEnvValue("TWILIO_WHATSAPP_TO") ||
+        getTrimmedEnvValue("WHATSAPP_NOTIFY_TO") ||
+        DEFAULT_WHATSAPP_NOTIFY_TO
+    ) || DEFAULT_TWILIO_WHATSAPP_TO;
+  const enabled = missingEnv.length === 0 && Boolean(fromNumber);
+
+  return {
+    enabled,
+    provider: "twilio",
+    target,
+    fromNumber: fromNumber || null,
+    missingEnv,
+    message: enabled
+      ? `Twilio WhatsApp is configured to send booking details to ${target}.`
+      : `Twilio WhatsApp is not ready. Missing env vars: ${missingEnv.join(", ")}.`
+  };
+};
+
+const getWhatsAppCloudConfig = () => {
+  const missingEnv = getMissingEnvKeys(["WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_CLOUD_TOKEN"]);
+  const phoneNumberId = getTrimmedEnvValue("WHATSAPP_PHONE_NUMBER_ID");
+  const accessToken = getTrimmedEnvValue("WHATSAPP_CLOUD_TOKEN");
+  const apiVersion = getTrimmedEnvValue("WHATSAPP_CLOUD_VERSION") || "v23.0";
+  const target =
+    formatCloudWhatsAppNumber(
+      getTrimmedEnvValue("WHATSAPP_CLOUD_TO") ||
+        getTrimmedEnvValue("WHATSAPP_NOTIFY_TO") ||
+        DEFAULT_WHATSAPP_NOTIFY_TO
+    ) || WHATSAPP_NUMBER_WITH_COUNTRY_CODE;
+  const enabled = missingEnv.length === 0;
+
+  return {
+    enabled,
+    provider: "whatsapp-cloud",
+    phoneNumberId,
+    accessToken,
+    apiVersion,
+    target: target ? `+${target}` : null,
+    missingEnv,
+    message: enabled
+      ? `WhatsApp Cloud API is configured to send booking details to +${target}.`
+      : `WhatsApp Cloud API is not ready. Missing env vars: ${missingEnv.join(", ")}.`
+  };
+};
+
+const getWhatsAppConfiguration = () => {
+  const normalizedProvider = getNormalizedWhatsAppProvider();
+
+  if (normalizedProvider === "twilio") {
+    return getTwilioWhatsAppConfig();
+  }
+
+  if (normalizedProvider === "cloud") {
+    return getWhatsAppCloudConfig();
+  }
+
+  return {
+    enabled: false,
+    provider: "none",
+    target: null,
+    missingEnv: WHATSAPP_PROVIDER ? [] : ["WHATSAPP_PROVIDER"],
+    message: WHATSAPP_PROVIDER
+      ? `Unsupported WHATSAPP_PROVIDER "${WHATSAPP_PROVIDER}". Use twilio or cloud.`
+      : "Set WHATSAPP_PROVIDER to twilio or cloud to enable automatic WhatsApp delivery."
+  };
+};
+
+const toPublicWhatsAppConfiguration = (config) => ({
+  provider: config.provider,
+  configured: config.enabled,
+  target: config.target,
+  missingEnv: config.missingEnv,
+  message: config.message,
+  ...(config.fromNumber ? { fromNumber: config.fromNumber } : {})
+});
+
+const buildNotificationResult = ({ status, config, message, error }) => ({
+  status,
+  ...toPublicWhatsAppConfiguration(config),
+  message: message || config.message,
+  ...(error ? { error } : {})
+});
+
 const ensureJsonStorage = async () => {
   await fs.mkdir(DATA_DIRECTORY, { recursive: true });
 
@@ -220,24 +370,20 @@ const sendHttpsRequest = (url, { method = "POST", headers = {}, body = "" } = {}
   });
 
 const sendViaTwilio = async (message) => {
-  const accountSid = (process.env.TWILIO_ACCOUNT_SID || "").trim();
-  const authToken = (process.env.TWILIO_AUTH_TOKEN || "").trim();
-  const fromNumber = (process.env.TWILIO_WHATSAPP_FROM || "").trim();
-  const toNumber = (
-    process.env.TWILIO_WHATSAPP_TO || `whatsapp:+${WHATSAPP_NUMBER_WITH_COUNTRY_CODE}`
-  ).trim();
+  const twilioConfig = getTwilioWhatsAppConfig();
+  const accountSid = getTrimmedEnvValue("TWILIO_ACCOUNT_SID");
+  const authToken = getTrimmedEnvValue("TWILIO_AUTH_TOKEN");
 
-  if (!accountSid || !authToken || !fromNumber) {
-    return {
+  if (!twilioConfig.enabled) {
+    return buildNotificationResult({
       status: "skipped",
-      provider: "twilio",
-      message: "Twilio WhatsApp credentials are not configured."
-    };
+      config: twilioConfig
+    });
   }
 
   const body = new URLSearchParams({
-    To: toNumber,
-    From: fromNumber,
+    To: twilioConfig.target,
+    From: twilioConfig.fromNumber,
     Body: message
   }).toString();
 
@@ -255,11 +401,11 @@ const sendViaTwilio = async (message) => {
   );
 
   if (response.statusCode >= 200 && response.statusCode < 300) {
-    return {
+    return buildNotificationResult({
       status: "sent",
-      provider: "twilio",
-      message: "WhatsApp notification sent successfully."
-    };
+      config: twilioConfig,
+      message: `WhatsApp notification sent successfully to ${twilioConfig.target}.`
+    });
   }
 
   throw new Error(
@@ -268,21 +414,18 @@ const sendViaTwilio = async (message) => {
 };
 
 const sendViaWhatsAppCloud = async (message) => {
-  const phoneNumberId = (process.env.WHATSAPP_PHONE_NUMBER_ID || "").trim();
-  const accessToken = (process.env.WHATSAPP_CLOUD_TOKEN || "").trim();
-  const apiVersion = (process.env.WHATSAPP_CLOUD_VERSION || "v23.0").trim();
+  const cloudConfig = getWhatsAppCloudConfig();
 
-  if (!phoneNumberId || !accessToken) {
-    return {
+  if (!cloudConfig.enabled) {
+    return buildNotificationResult({
       status: "skipped",
-      provider: "whatsapp-cloud",
-      message: "WhatsApp Cloud API credentials are not configured."
-    };
+      config: cloudConfig
+    });
   }
 
   const payload = JSON.stringify({
     messaging_product: "whatsapp",
-    to: WHATSAPP_NUMBER_WITH_COUNTRY_CODE,
+    to: normalizePhoneDigits(cloudConfig.target),
     type: "text",
     text: {
       preview_url: false,
@@ -291,11 +434,11 @@ const sendViaWhatsAppCloud = async (message) => {
   });
 
   const response = await sendHttpsRequest(
-    `https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`,
+    `https://graph.facebook.com/${cloudConfig.apiVersion}/${cloudConfig.phoneNumberId}/messages`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${cloudConfig.accessToken}`,
         "Content-Type": "application/json",
         "Content-Length": Buffer.byteLength(payload)
       },
@@ -304,11 +447,11 @@ const sendViaWhatsAppCloud = async (message) => {
   );
 
   if (response.statusCode >= 200 && response.statusCode < 300) {
-    return {
+    return buildNotificationResult({
       status: "sent",
-      provider: "whatsapp-cloud",
-      message: "WhatsApp notification sent successfully."
-    };
+      config: cloudConfig,
+      message: `WhatsApp notification sent successfully to ${cloudConfig.target}.`
+    });
   }
 
   throw new Error(
@@ -317,26 +460,28 @@ const sendViaWhatsAppCloud = async (message) => {
 };
 
 const sendWhatsAppNotification = async (message) => {
+  const whatsappConfig = getWhatsAppConfiguration();
+
   try {
-    if (WHATSAPP_PROVIDER === "twilio") {
+    if (getNormalizedWhatsAppProvider() === "twilio") {
       return await sendViaTwilio(message);
     }
 
-    if (WHATSAPP_PROVIDER === "cloud" || WHATSAPP_PROVIDER === "meta") {
+    if (getNormalizedWhatsAppProvider() === "cloud") {
       return await sendViaWhatsAppCloud(message);
     }
 
-    return {
+    return buildNotificationResult({
       status: "skipped",
-      provider: "none",
-      message: "Set WHATSAPP_PROVIDER to twilio or cloud to enable WhatsApp delivery."
-    };
+      config: whatsappConfig
+    });
   } catch (error) {
-    return {
+    return buildNotificationResult({
       status: "failed",
-      provider: WHATSAPP_PROVIDER || "unknown",
-      message: error.message || "Unable to send WhatsApp notification."
-    };
+      config: whatsappConfig,
+      message: error.message || "Unable to send WhatsApp notification.",
+      error: error.message || "Unable to send WhatsApp notification."
+    });
   }
 };
 
@@ -348,11 +493,14 @@ const createApp = () => {
   app.use(express.static(ROOT_DIR, { index: false }));
 
   app.get(["/health", "/api/health"], (req, res) => {
+    const whatsappConfig = getWhatsAppConfiguration();
+
     res.status(200).json({
       success: true,
       message: "Server is running",
       database: databaseStatus,
-      whatsappProvider: WHATSAPP_PROVIDER || "not-configured"
+      whatsappProvider: whatsappConfig.provider === "none" ? "not-configured" : whatsappConfig.provider,
+      whatsapp: toPublicWhatsAppConfiguration(whatsappConfig)
     });
   });
 

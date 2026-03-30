@@ -1445,17 +1445,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setConnectionStatus("Connected to booking server", "success");
       const shouldCloseAfterSubmit = data?.notification?.status === "sent" || !data?.notification;
+      const backendNotificationMessage =
+        data?.notification?.message || "automatic WhatsApp delivery is not configured on the backend yet.";
 
       if (data?.notification?.status === "sent") {
-        setFeedback("Booking Successful \u2705 Details sent to WhatsApp.", "success");
+        setFeedback(data.notification.message, "success");
       } else if (data?.notification?.status === "skipped") {
         setFeedback(
-          "Booking saved, but automatic WhatsApp sending is not configured on the backend yet.",
+          `Booking saved, but ${backendNotificationMessage}`,
           "error"
         );
       } else if (data?.notification?.status === "failed") {
         setFeedback(
-          "Booking saved, but automatic WhatsApp delivery failed on the backend.",
+          `Booking saved, but ${backendNotificationMessage}`,
           "error"
         );
       } else {

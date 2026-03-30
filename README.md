@@ -108,18 +108,28 @@ https://your-service-name.onrender.com/health
 Set:
 
 - `WHATSAPP_PROVIDER=twilio`
+- `WHATSAPP_NOTIFY_TO`
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
 - `TWILIO_WHATSAPP_FROM`
-- `TWILIO_WHATSAPP_TO`
+- `TWILIO_WHATSAPP_TO` (optional override, otherwise `WHATSAPP_NOTIFY_TO` is used)
 
 ### Option 2: WhatsApp Cloud API
 
 Set:
 
 - `WHATSAPP_PROVIDER=cloud`
+- `WHATSAPP_NOTIFY_TO`
 - `WHATSAPP_PHONE_NUMBER_ID`
 - `WHATSAPP_CLOUD_TOKEN`
+- `WHATSAPP_CLOUD_TO` (optional override, otherwise `WHATSAPP_NOTIFY_TO` is used)
+
+You can inspect `GET /health` or `GET /api/health` to see:
+
+- the active WhatsApp provider
+- whether automatic delivery is configured
+- which environment variables are still missing
+- the destination number currently selected for booking alerts
 
 If the WhatsApp provider is not configured, booking storage still works, but automatic WhatsApp delivery will not complete until the backend credentials are added.
 
