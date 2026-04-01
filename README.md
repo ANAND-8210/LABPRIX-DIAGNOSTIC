@@ -68,13 +68,20 @@ Start Command: npm start
 
 4. Add environment variables from `.env.example`.
 5. If you want persistent storage on Render, set `MONGODB_URI` to MongoDB Atlas.
-6. After deploy, note your live backend URL:
+6. In MongoDB Atlas, open `Network Access` and allowlist the Render outbound IP ranges for your region:
+
+```text
+74.220.50.0/24
+74.220.58.0/24
+```
+
+7. After deploy, note your live backend URL:
 
 ```text
 https://your-service-name.onrender.com
 ```
 
-7. Confirm the health endpoint:
+8. Confirm the health endpoint:
 
 ```text
 https://your-service-name.onrender.com/health
